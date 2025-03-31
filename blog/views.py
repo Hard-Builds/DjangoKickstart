@@ -4,6 +4,7 @@ from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, \
     DeleteView
 
+from blog.enum import PostStatusEnum
 from blog.models import Post
 
 
@@ -24,6 +25,9 @@ class PostListView(ListView):
     ordering = ['-date_posted']
     paginate_by = 3
 
+    def get_queryset(self):
+        return Post.objects.published()
+
 
 class UserPostListView(ListView):
     model = Post
@@ -33,7 +37,11 @@ class UserPostListView(ListView):
 
     def get_queryset(self):
         user = get_object_or_404(User, username=self.kwargs.get("username"))
-        return Post.objects.filter(author=user).order_by("date_posted")
+        if user.username == self.request.user.username:
+            return Post.objects.filter(author=user).order_by("date_posted")
+        else:
+            return Post.objects.filter(author=user, status=PostStatusEnum.PUBLISHED.value).order_by("date_posted")
+
 
 class DetailedPostView(DetailView):
     model = Post
@@ -42,7 +50,7 @@ class DetailedPostView(DetailView):
 
 class AddPostView(LoginRequiredMixin, CreateView):
     model = Post
-    fields = ["title", "content"]
+    fields = ["title", "content", "status"]
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -51,7 +59,7 @@ class AddPostView(LoginRequiredMixin, CreateView):
 
 class UpdatePostView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ["title", "content"]
+    fields = ["title", "content", "status"]
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -75,4 +83,3 @@ class DeletePostView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if post.author == self.request.user:
             return True
         return False
-
