@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import transaction
 from django.shortcuts import render, redirect
 
 from users.forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 
 
 @login_required
+@transaction.atomic
 def profile(request):
     if request.method == "POST":
         user_form = UserUpdateForm(request.POST, instance=request.user)
@@ -33,6 +35,7 @@ def profile(request):
     return render(request, "users/profile.html", context)
 
 
+@transaction.atomic
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)

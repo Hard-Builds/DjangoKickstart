@@ -8,10 +8,12 @@
             <a class="mr-2" href="{% url 'user-posts' post.author.username %}">
                 {{ post.author }}
             </a>
-            <small class="text-muted">{{ post.date_posted|date:"d F, Y" }}</small>
         </div>
-        <h2><a class="article-title" href="{% url 'blog-details' post.pk %}">{{ post.title }}</a></h2>
-        <p class="article-content">{{ post.content }}</p>
+        <div class="article-metadata">
+            <h2><a class="article-title" href="{% url 'blog-details' post.pk %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+        </div>
+        <small class="text-muted">{{ post.status }} on {{ post.date_posted|date:"d F, Y" }}</small>
     </div>
 </article>
 {% endfor %}
