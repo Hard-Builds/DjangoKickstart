@@ -136,3 +136,38 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Session Settings
 SESSION_COOKIE_AGE = 30 * 60
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "{levelname} - {asctime} - {module} - {funcName} - {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "loggers": {
+        "django_kickstart": {
+            "handlers": ["console"],
+            "level": "INFO",
+            "propagate": True,
+        },
+        "blog": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        "users": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+    },
+}
